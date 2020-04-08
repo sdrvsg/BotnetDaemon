@@ -103,12 +103,9 @@ def callback(bot_hash):
     secret = request.args.get('secret')
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
-    return make_response((bot.confirmation_token, 200))
     if not bot:
         return make_response(('error', 403))
     if bot.group_id != group_id:
-        return make_response(('error', 403))
-    if secret and secret != bot.secret:
         return make_response(('error', 403))
     if event_type == 'confirmation':
         return make_response((bot.confirmation_token, 200))
