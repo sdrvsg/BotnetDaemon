@@ -25,13 +25,13 @@ def bots_index():
     return render_template('bots/index.html', title='Мои боты', **params)
 
 
-@blueprint.route('/bots/<int:bot_id>', methods=['GET'])
+@blueprint.route('/bots/<string:bot_hash>', methods=['GET'])
 @login_required
 @bot_exists_required
 @bot_owner_required
-def bots_show(bot_id):
+def bots_show(bot_hash):
     connect = session.create_session()
-    bot = connect.query(Bot).filter(Bot.id == bot_id).first()
+    bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     return render_template('bots/show.html', title=f'Бот / {bot.name}', bot=bot)
 
 
@@ -53,19 +53,19 @@ def bots_create():
         bot = connect.query(Bot).all()[-1]
         bot.hash = str(uuid3(NAMESPACE_DNS, f'bot::{bot.id}'))
         connect.commit()
-        return redirect('/bots')
+        return redirect(f'/bots/{bot.hash}')
     return render_template('bots/create.html', title='Новый бот', form=form)
 
 
-@blueprint.route('/bots/<int:bot_id>/edit', methods=['GET', 'POST'])
+@blueprint.route('/bots/<string:bot_hash>/edit', methods=['GET', 'POST'])
 @login_required
 @bot_exists_required
 @bot_owner_required
-def bots_edit(bot_id):
+def bots_edit(bot_hash):
     form = BotForm()
     if request.method == 'GET':
         connect = session.create_session()
-        bot = connect.query(Bot).filter(Bot.id == bot_id).first()
+        bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
         form.name.data = bot.name
         form.access_token.data = bot.access_token
         form.confirmation_token.data = bot.confirmation_token
@@ -73,40 +73,39 @@ def bots_edit(bot_id):
         form.group_id.data = bot.group_id
     if form.validate_on_submit():
         connect = session.create_session()
-        bot = connect.query(Bot).filter(Bot.id == bot_id).first()
+        bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
         bot.name = form.name.data
         bot.access_token = form.access_token.data
         bot.confirmation_token = form.confirmation_token.data
         bot.secret = form.secret.data
         bot.group_id = form.group_id.data
         connect.commit()
-        return redirect(f'/bots/{bot.id}')
+        return redirect(f'/bots/{bot.hash}')
     return render_template('bots/create.html', title='Редактирование бота', form=form)
 
 
-@blueprint.route('/bots/<int:bot_id>/delete', methods=['GET', 'POST'])
+@blueprint.route('/bots/<string:bot_hash>/delete', methods=['GET', 'POST'])
 @login_required
 @bot_exists_required
 @bot_owner_required
-def bots_delete(bot_id):
+def bots_delete(bot_hash):
     connect = session.create_session()
-    bot = connect.query(Bot).filter(Bot.id == bot_id).first()
+    bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     connect.delete(bot)
     connect.commit()
     return redirect('/bots')
 
 
 @blueprint.route('/callback/<string:bot_hash>', methods=['POST'])
+@bot_exists_required
 def callback(bot_hash):
     event_type = request.args.get('type')
     group_id = request.args.get('group_id')
     secret = request.args.get('secret')
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
-    if not bot:
-        return make_response(('error', 403))
     if bot.group_id != group_id:
-        return make_response(('error', 403))
+        return make_response(('group_id invalid', 403))
     if event_type == 'confirmation':
         return make_response((bot.confirmation_token, 200))
-    return make_response(('error', 403))
+    return make_response(('bad request', 403))
