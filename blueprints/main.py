@@ -100,12 +100,14 @@ def bots_delete(bot_hash):
 @bot_exists_required
 def callback(bot_hash):
     event_type = request.args.get('type')
-    group_id = request.args.get('group_id')
+    group_id = int(request.args.get('group_id'))
     secret = request.args.get('secret')
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     if bot.group_id != group_id:
-        return make_response(('group_id invalid', 403))
+        return make_response((f'group id invalid', 403))
+    if secret and secret != bot.secret:
+        return make_response((f'secret code failed', 403))
     if event_type == 'confirmation':
         return make_response((bot.confirmation_token, 200))
     return make_response(('bad request', 403))

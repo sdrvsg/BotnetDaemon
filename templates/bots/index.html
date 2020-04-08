@@ -18,11 +18,11 @@
                 {% for bot in bots %}
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <td><a href="/bots/{{ bot.id }}" class="text-dark">{{ bot.name }}</a></td>
+                    <td><a href="/bots/{{ bot.hash }}" class="text-dark">{{ bot.name }}</a></td>
                     <td>
-                        <a href="/bots/{{ bot.id }}" class="text-dark mr-3"><i class="fa fa-eye"></i></a>
-                        <a href="/bots/{{ bot.id }}/edit" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
-                        <a href="/bots/{{ bot.id }}/delete" class="text-dark"><i class="fa fa-trash-o"></i></a>
+                        <a href="/bots/{{ bot.hash }}" class="text-dark mr-3"><i class="fa fa-eye"></i></a>
+                        <a href="/bots/{{ bot.hash }}/edit" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
+                        <a href="/bots/{{ bot.hash }}/delete" class="text-dark"><i class="fa fa-trash-o"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
