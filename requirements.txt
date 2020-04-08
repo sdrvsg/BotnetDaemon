@@ -3,6 +3,6 @@ gunicorn==20.0.4
 flask-login
 sqlalchemy
 werkzeug
-flask_wtf
+flask-wtf
 wtforms
 vk_api
