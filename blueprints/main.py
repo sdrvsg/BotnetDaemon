@@ -98,6 +98,7 @@ def bots_delete(bot_id):
 
 @blueprint.route('/callback/<string:bot_hash>', methods=['POST'])
 def callback(bot_hash):
+    return make_response((str(request.args), 200))
     event_type = request.args.get('type')
     group_id = request.args.get('group_id')
     secret = request.args.get('secret')
