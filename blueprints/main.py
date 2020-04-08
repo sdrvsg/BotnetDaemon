@@ -1,5 +1,5 @@
 from uuid import uuid3, NAMESPACE_DNS
-from flask import Blueprint, render_template, redirect, request
+from flask import Blueprint, render_template, redirect, request, make_response
 from flask_login import login_required, current_user
 import vk_api
 from database import session
@@ -96,6 +96,19 @@ def bots_delete(bot_id):
     return redirect('/bots')
 
 
-@blueprint.route('/callback/<string:bot_hash>', methods=['GET'])
+@blueprint.route('/callback/<string:bot_hash>', methods=['POST'])
 def callback(bot_hash):
-    print(request.args)
+    event_type = request.args.get('type')
+    group_id = request.args.get('group_id')
+    secret = request.args.get('secret')
+    connect = session.create_session()
+    bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
+    if not bot:
+        return make_response(('error', 403))
+    if bot.group_id != group_id:
+        return make_response(('error', 403))
+    if secret and secret != bot.secret:
+        return make_response(('error', 403))
+    if event_type == 'confirmation':
+        make_response((bot.confirmation_token, 200))
+    return make_response(('error', 403))

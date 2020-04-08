@@ -25,14 +25,3 @@ def bot_owner_required(f):
             return abort(404)
         return f(*args, **kwargs)
     return decorated_function
-
-
-def callback_bot_exists_check(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        bot_id = kwargs.get('bot_id', 0)
-        bot = session.create_session().query(Bot).filter(Bot.id == bot_id).first()
-        if not bot:
-            return abort(404)
-        return f(*args, **kwargs)
-    return decorated_function
