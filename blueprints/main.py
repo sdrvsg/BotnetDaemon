@@ -1,4 +1,3 @@
-from json import loads
 from uuid import uuid3, NAMESPACE_DNS
 from flask import Blueprint, render_template, redirect, request, make_response, jsonify
 from flask_login import login_required, current_user
@@ -100,10 +99,11 @@ def bots_delete(bot_hash):
 @blueprint.route('/callback/<string:bot_hash>', methods=['POST'])
 @bot_exists_required
 def callback(bot_hash):
-    args = loads(request.json)
-    event_type = args.get('type')
-    group_id = args.get('group_id')
-    secret = args.get('secret')
+    if type(request.json) is not dict:
+        return make_response(('bad request', 403))
+    event_type = request.json.get('type')
+    group_id = request.json.get('group_id')
+    secret = request.json.get('secret')
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     if bot.group_id != group_id:
