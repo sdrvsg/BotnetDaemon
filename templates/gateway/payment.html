@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-6">
+        <h2>Пополнение баланса</h2>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.money_amount.label }}<br>
+                {{ form.money_amount(class="form-control") }}<br>
+                {% for error in form.money_amount.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit(type="submit", class="btn btn-secondary") }}</p>
+            {{message}}
+        </form>
+    </div>
+</div>
+{% endblock %}
