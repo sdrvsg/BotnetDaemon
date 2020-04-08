@@ -1,6 +1,7 @@
 from uuid import uuid3, NAMESPACE_DNS
 from flask import Blueprint, render_template, redirect, request
 from flask_login import login_required, current_user
+import vk_api
 from database import session
 from models.bot import Bot
 from forms.bot import BotForm
@@ -44,6 +45,7 @@ def bots_create():
         bot.name = form.name.data
         bot.access_token = form.access_token.data
         bot.confirmation_token = form.confirmation_token.data
+        bot.secret = form.secret.data
         bot.group_id = form.group_id.data
         current_user.bots.append(bot)
         connect.merge(current_user)
@@ -67,6 +69,7 @@ def bots_edit(bot_id):
         form.name.data = bot.name
         form.access_token.data = bot.access_token
         form.confirmation_token.data = bot.confirmation_token
+        form.secret.data = bot.secret
         form.group_id.data = bot.group_id
     if form.validate_on_submit():
         connect = session.create_session()
@@ -74,9 +77,10 @@ def bots_edit(bot_id):
         bot.name = form.name.data
         bot.access_token = form.access_token.data
         bot.confirmation_token = form.confirmation_token.data
+        bot.secret = form.secret.data
         bot.group_id = form.group_id.data
         connect.commit()
-        return redirect('/bots')
+        return redirect(f'/bots/{bot.id}')
     return render_template('bots/create.html', title='Редактирование бота', form=form)
 
 
@@ -90,3 +94,8 @@ def bots_delete(bot_id):
     connect.delete(bot)
     connect.commit()
     return redirect('/bots')
+
+
+@blueprint.route('/callback/<string:bot_hash>', methods=['GET'])
+def callback(bot_hash):
+    print(request.args)

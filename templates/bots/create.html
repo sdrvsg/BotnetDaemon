@@ -35,6 +35,15 @@
                 {% endfor %}
             </p>
             <p>
+                {{ form.secret.label }}<br>
+                {{ form.secret(class="form-control") }}<br>
+                {% for error in form.secret.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.group_id.label }}<br>
                 {{ form.group_id(class="form-control") }}<br>
                 {% for error in form.group_id.errors %}

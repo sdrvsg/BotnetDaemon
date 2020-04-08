@@ -4,3 +4,4 @@ flask-login
 sqlalchemy
 werkzeug
 wtforms
+vk_api

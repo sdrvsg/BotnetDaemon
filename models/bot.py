@@ -11,6 +11,7 @@ class Bot(SqlAlchemyBase):
     name = sqlalchemy.Column(sqlalchemy.String)
     access_token = sqlalchemy.Column(sqlalchemy.String)
     confirmation_token = sqlalchemy.Column(sqlalchemy.String)
+    secret = sqlalchemy.Column(sqlalchemy.String)
     group_id = sqlalchemy.Column(sqlalchemy.Integer)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     user = orm.relationship('User', back_populates='bots')
