@@ -1,7 +1,6 @@
 from uuid import uuid3, NAMESPACE_DNS
-from flask import Blueprint, render_template, redirect, request, make_response, jsonify
+from flask import Blueprint, render_template, redirect, request, make_response, abort
 from flask_login import login_required, current_user
-import vk_api
 from database import session
 from models.bot import Bot
 from forms.bot import BotForm
@@ -84,7 +83,7 @@ def bots_edit(bot_hash):
     return render_template('bots/create.html', title='Редактирование бота', form=form)
 
 
-@blueprint.route('/bots/<string:bot_hash>/delete', methods=['GET', 'POST'])
+@blueprint.route('/bots/<string:bot_hash>/delete', methods=['POST'])
 @login_required
 @bot_exists_required
 @bot_owner_required
@@ -94,6 +93,27 @@ def bots_delete(bot_hash):
     connect.delete(bot)
     connect.commit()
     return redirect('/bots')
+
+
+@blueprint.route('/bots/<string:bot_hash>/toggle', methods=['POST'])
+@login_required
+@bot_exists_required
+@bot_owner_required
+def bots_toggle(bot_hash):
+    status = request.form.get('status')
+    if status not in ['enable', 'disable']:
+        return abort(401)
+    connect = session.create_session()
+    bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
+    if status == 'enable' and not bot.enabled:
+        bot.enabled = True
+        connect.commit()
+        return redirect(f'/bots/{bot_hash}')
+    elif status == 'disable' and bot.enabled:
+        bot.enabled = False
+        connect.commit()
+        return redirect(f'/bots/{bot_hash}')
+    return abort(401)
 
 
 @blueprint.route('/callback/<string:bot_hash>', methods=['POST'])
@@ -108,7 +128,7 @@ def callback(bot_hash):
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     if bot.group_id != group_id:
         return make_response((f'group id invalid', 403))
-    if secret and secret != bot.secret:
+    if bot.secret and secret != bot.secret:
         return make_response((f'secret code failed', 403))
     if event_type == 'confirmation':
         return make_response((bot.confirmation_token, 200))

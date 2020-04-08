@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-6">
         <h2>Мои боты</h2>
-        <a href="/bots/create" class="btn btn-primary mb-5">Добавить бота</a>
+        <a href="/bots/create" class="btn btn-secondary mb-5">Добавить бота</a>
 
         <table class="table table-striped">
             <thead class="thead-dark">
@@ -22,7 +22,7 @@
                     <td>
                         <a href="/bots/{{ bot.hash }}" class="text-dark mr-3"><i class="fa fa-eye"></i></a>
                         <a href="/bots/{{ bot.hash }}/edit" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
-                        <a href="/bots/{{ bot.hash }}/delete" class="text-dark"><i class="fa fa-trash-o"></i></a>
+                        <a href="#" class="text-dark" data-toggle="modal" data-target="#delete_bot_modal" data-hash="{{ bot.hash }}" data-name="{{ bot.name }}"><i class="fa fa-trash-o"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -30,4 +30,45 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="delete_bot_modal" tabindex="-1" role="dialog" aria-labelledby="delete_bot_modal_label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete_bot_modal_label">Подтвердите действие</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите безвозвратно удалить бота ''
+            </div>
+            <div class="modal-footer">
+                <form action="/bots//delete" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $('#delete_bot_modal').on('show.bs.modal', function (event) {
+
+        console.log(1);
+
+        var button = $(event.relatedTarget);
+        var hash = button.data('hash');
+        var name = button.data('name');
+        var modal = $(this);
+
+        modal.find('.modal-body').text("Вы уверены, что хотите безвозвратно удалить бота '" + name + "'");
+        modal.find('form').attr('action', '/bots/' + hash + '/delete');
+
+    })
+</script>
 {% endblock %}

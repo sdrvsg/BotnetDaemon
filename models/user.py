@@ -10,9 +10,10 @@ class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True)
-    hashed_password = sqlalchemy.Column(sqlalchemy.String)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=False)
+    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    money = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     bots = orm.relationship('Bot', back_populates='user')
 

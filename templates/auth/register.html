@@ -6,7 +6,6 @@
         <h2>Регистрация</h2>
         <form action="" method="post">
             {{ form.hidden_tag() }}
-            {{ form.csrf_token }}
             <p>
                 {{ form.name.label }}<br>
                 {{ form.name(class="form-control") }}<br>
@@ -43,7 +42,7 @@
                     </p>
                 {% endfor %}
             </p>
-            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            <p>{{ form.submit(type="submit", class="btn btn-secondary") }}</p>
             {{message}}
         </form>
     </div>

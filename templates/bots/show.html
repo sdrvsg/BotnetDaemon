@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2>{{ bot.name }}</h2>
-        <a href="/bots" class="btn btn-secondary mb-5">Назад</a>
-        <a href="/bots/{{ bot.hash }}/edit" class="btn btn-primary mb-5">Редактировать</a>
-        <a href="/bots/{{ bot.hash }}/delete" class="btn btn-danger mb-5">Удалить</a>
+<div class="row justify-content-center">
+    <div class="col-12 mb-5">
+        <h2 class="mb-3">{{ bot.name }}</h2>
+        <div class="btn-group" role="group" aria-label="Bot status">
+            <a href="/bots" class="btn btn-secondary">Назад</a>
+            <a href="/bots/{{ bot.hash }}/edit" class="btn btn-secondary">Редактировать</a>
+            <button type="button" data-toggle="modal" data-target="#delete_bot_modal" class="btn btn-secondary">Удалить</button>
+        </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-10">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Основные настройки</h5>
             </div>
 
             <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    Статус:
+                    <span class="font-weight-bold">
+                        {% if bot.enabled %} <span class="text-success">В сети</span> {% else %} <span class="text-danger">Оффлайн</span> {% endif %}
+                    </span>
+                </li>
+
                 <li class="list-group-item">Ключ доступа: <span class="font-weight-bold">{{ bot.access_token }}</span></li>
                 <li class="list-group-item">Код подтверждения: <span class="font-weight-bold">{{ bot.confirmation_token }}</span></li>
                 <li class="list-group-item">Секретный ключ: <span class="font-weight-bold">{{ bot.secret }}</span></li>
@@ -24,31 +33,36 @@
             </ul>
 
             <div class="card-body">
-                <div class="btn-group" role="group" aria-label="Bot status">
-                    <button type="button" class="btn btn-secondary" disabled>Включить</button>
-                    <button type="button" class="btn btn-secondary">Выключить</button>
-                </div>
+                <form action="/bots/{{ bot.hash }}/toggle" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="btn-group" role="group" aria-label="Bot status">
+                        <button type="submit" name="status" value="enable" class="btn btn-secondary" {% if bot.enabled %} disabled {% endif %}>Включить</button>
+                        <button type="submit" name="status" value="disable" class="btn btn-secondary" {% if not bot.enabled %} disabled {% endif %}>Выключить</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="col-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Основные настройки</h5>
+<div class="modal fade" id="delete_bot_modal" tabindex="-1" role="dialog" aria-labelledby="delete_bot_modal_label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete_bot_modal_label">Подтвердите действие</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Ключ доступа: <span class="font-weight-bold">{{ bot.access_token }}</span></li>
-                <li class="list-group-item">Код подтверждения: <span class="font-weight-bold">{{ bot.confirmation_token }}</span></li>
-                <li class="list-group-item">ID Группы: <span class="font-weight-bold">{{ bot.group_id }}</span></li>
-            </ul>
-
-            <div class="card-body">
-                <div class="btn-group" role="group" aria-label="Bot status">
-                    <button type="button" class="btn btn-secondary" disabled>Включить</button>
-                    <button type="button" class="btn btn-secondary">Выключить</button>
-                </div>
+            <div class="modal-body">
+                Вы уверены, что хотите безвозвратно удалить бота '{{ bot.name }}'
+            </div>
+            <div class="modal-footer">
+                <form action="/bots/{{ bot.hash }}/delete" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
             </div>
         </div>
     </div>
