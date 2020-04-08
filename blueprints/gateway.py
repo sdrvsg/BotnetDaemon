@@ -8,8 +8,8 @@ from forms.payment import PaymentForm
 blueprint = Blueprint('gateway', __name__)
 HOST = 'https://www.free-kassa.ru/merchant/cash.php'
 SHOP_ID = 64860
-SECRET_ONE = 'vtwcxtqi'
-SECRET_TWO = 'pr1vctul'
+SECRET_ONE = '8gdj75mb'
+SECRET_TWO = 'p1hhfqfs'
 
 
 @blueprint.route('/gateway/payment', methods=['GET', 'POST'])
