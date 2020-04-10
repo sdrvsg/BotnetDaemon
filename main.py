@@ -25,6 +25,7 @@ session.global_init('database/bot_net.sqlite')
 
 csrf = CSRFProtect()
 csrf.init_app(app)
+csrf.exempt(bp_api)
 
 
 @login_manager.user_loader
