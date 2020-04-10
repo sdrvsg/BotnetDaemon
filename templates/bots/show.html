@@ -5,13 +5,13 @@
     <div class="col-12 mb-5">
         <h2 class="mb-3">{{ bot.name }}</h2>
         <div class="btn-group" role="group" aria-label="Bot status">
-            <a href="/bots" class="btn btn-secondary">Назад</a>
-            <a href="/bots/{{ bot.hash }}/edit" class="btn btn-secondary">Редактировать</a>
+            <a href="{{ url_for('bots.index') }}" class="btn btn-secondary">Назад</a>
+            <a href="{{ url_for('bots.edit', bot_hash=bot.hash) }}" class="btn btn-secondary">Редактировать</a>
             <button type="button" data-toggle="modal" data-target="#delete_bot_modal" class="btn btn-secondary">Удалить</button>
         </div>
     </div>
 
-    <div class="col-10">
+    <div class="col-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Основные настройки</h5>
@@ -29,17 +29,50 @@
                 <li class="list-group-item">Код подтверждения: <span class="font-weight-bold">{{ bot.confirmation_token }}</span></li>
                 <li class="list-group-item">Секретный ключ: <span class="font-weight-bold">{{ bot.secret }}</span></li>
                 <li class="list-group-item">ID Группы: <span class="font-weight-bold">{{ bot.group_id }}</span></li>
-                <li class="list-group-item">Адрес бота: <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/callback/{{ bot.hash }}</span></li>
             </ul>
 
             <div class="card-body">
-                <form action="/bots/{{ bot.hash }}/toggle" method="post">
+                <form action="{{ url_for('bots.toggle', bot_hash=bot.hash) }}" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="btn-group" role="group" aria-label="Bot status">
                         <button type="submit" name="status" value="enable" class="btn btn-secondary" {% if bot.enabled %} disabled {% endif %}>Включить</button>
                         <button type="submit" name="status" value="disable" class="btn btn-secondary" {% if not bot.enabled %} disabled {% endif %}>Выключить</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Подключение</h5>
+            </div>
+
+            <div class="card-body">
+                <p>
+                    Зайдите в настройки Вашей группы, в раздел <span class="font-weight-bold">Работа с API</span>
+                </p>
+                <p>
+                    Зайдите в раздел <span class="font-weight-bold">Ключи доступа</span>. Нажмите кнопку <span class="font-weight-bold">Создать ключ</span>.
+                    Выставьте все галочки и нажмите <span class="font-weight-bold">Создать</span>.
+                    Полученный ключ сохраните до дальнейшего использования.
+                </p>
+                <p>
+                    Зайдите в раздел <span class="font-weight-bold">Callback API</span><br>
+                    - В подразделе <span class="font-weight-bold">Настройки сервера</span> Версию API укажите <span class="font-weight-bold">5.103</span><br>
+                    - Адрес укажите <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/api/callback/{{ bot.hash }}</span><br>
+                    - Снизу в рамке копируете те цифры, что идут после <span class="font-weight-bold">group_id</span>. Это ID Группы, сохраните его себе.<br>
+                    - <span class="font-weight-bold">Строку, которую должен вернуть сервер</span> также сохраните себе.<br>
+                    - <span class="font-weight-bold">Секретный ключ</span> задайте по своему усмотрению и также сохраните.<br>
+                    - В подразделе <span class="font-weight-bold">Типы событий</span> поставьте галочку на <span class="font-weight-bold">Входящее сообщение</span>.
+                </p>
+                <p>
+                    Нажмите <span class="font-weight-bold">Редактировать</span> и укажите
+                    <span class="font-weight-bold">Ключ доступа, код подтверждения, секретный ключ и ID группы</span> те, что Вы получили ранее.<br>
+                    Нажмите <span class="font-weight-bold">Сохранить</span>.
+                    В своей группе, в разделе <span class="font-weight-bold">Callback API</span> нажмите <span class="font-weight-bold">Подтвердить</span>.
+                </p>
             </div>
         </div>
     </div>
@@ -58,7 +91,7 @@
                 Вы уверены, что хотите безвозвратно удалить бота '{{ bot.name }}'
             </div>
             <div class="modal-footer">
-                <form action="/bots/{{ bot.hash }}/delete" method="post">
+                <form action="{{ url_for('bots.delete', bot_hash=bot.hash) }}" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                     <button type="submit" class="btn btn-danger">Удалить</button>

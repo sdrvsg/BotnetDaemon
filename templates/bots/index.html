@@ -4,7 +4,8 @@
 <div class="row">
     <div class="col-6">
         <h2>Мои боты</h2>
-        <a href="/bots/create" class="btn btn-secondary mb-5">Добавить бота</a>
+        <a href="{{ url_for('bots.create') }}" class="btn btn-secondary mb-5
+        {% if not can_create %} disabled" tabindex="-1" role="button" aria-disabled="true {% endif %}">Добавить бота</a>
 
         <table class="table table-striped">
             <thead class="thead-dark">
@@ -18,10 +19,10 @@
                 {% for bot in bots %}
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <td><a href="/bots/{{ bot.hash }}" class="text-dark">{{ bot.name }}</a></td>
+                    <td><a href="{{ url_for('bots.show', bot_hash=bot.hash) }}" class="text-dark">{{ bot.name }}</a></td>
                     <td>
-                        <a href="/bots/{{ bot.hash }}" class="text-dark mr-3"><i class="fa fa-eye"></i></a>
-                        <a href="/bots/{{ bot.hash }}/edit" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
+                        <a href="{{ url_for('bots.show', bot_hash=bot.hash) }}" class="text-dark mr-3"><i class="fa fa-eye"></i></a>
+                        <a href="{{ url_for('bots.edit', bot_hash=bot.hash) }}" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
                         <a href="#" class="text-dark" data-toggle="modal" data-target="#delete_bot_modal" data-hash="{{ bot.hash }}" data-name="{{ bot.name }}"><i class="fa fa-trash-o"></i></a>
                     </td>
                 </tr>
@@ -67,7 +68,7 @@
         var modal = $(this);
 
         modal.find('.modal-body').text("Вы уверены, что хотите безвозвратно удалить бота '" + name + "'");
-        modal.find('form').attr('action', '/bots/' + hash + '/delete');
+        modal.find('form').attr('action', hash + '/delete');
 
     })
 </script>

@@ -16,6 +16,8 @@ class User(SqlAlchemyBase, UserMixin):
     money = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     bots = orm.relationship('Bot', back_populates='user')
+    role_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('roles.id'), nullable=False)
+    role = orm.relationship('Role', back_populates='users')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

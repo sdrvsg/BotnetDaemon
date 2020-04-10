@@ -3,6 +3,7 @@ from flask import abort
 from flask_login import current_user
 from database import session
 from models.bot import Bot
+from models.role import Role
 
 
 def bot_exists_required(f):
@@ -23,5 +24,25 @@ def bot_owner_required(f):
         bot = session.create_session().query(Bot).filter(Bot.hash == bot_hash).first()
         if bot.user != current_user:
             return abort(404)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def role_required(f, slug):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        role = session.create_session().query(Role).filter(Role.slug == slug).first()
+        if current_user.role != role:
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def check_bot_limit(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        role = current_user.role
+        if len(current_user.bots) >= role.bots_limit:
+            return abort(403)
         return f(*args, **kwargs)
     return decorated_function

@@ -3,8 +3,10 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from database import session
 from blueprints.main import blueprint as bp_main
+from blueprints.bots import blueprint as bp_bots
 from blueprints.auth import blueprint as bp_auth
 from blueprints.gateway import blueprint as bp_gateway
+from blueprints.api import blueprint as bp_api
 from models.user import User
 
 app = Flask(__name__)
@@ -14,8 +16,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 app.register_blueprint(bp_main)
+app.register_blueprint(bp_bots)
 app.register_blueprint(bp_auth)
 app.register_blueprint(bp_gateway)
+app.register_blueprint(bp_api)
 
 session.global_init('database/bot_net.sqlite')
 

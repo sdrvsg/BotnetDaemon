@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 
 class BotForm(FlaskForm):
     name = StringField('Название', validators=[DataRequired()])
-    access_token = StringField('Ключ доступа', validators=[DataRequired()])
-    confirmation_token = StringField('Код подтверждения', validators=[DataRequired()])
+    access_token = StringField('Ключ доступа')
+    confirmation_token = StringField('Код подтверждения')
     secret = StringField('Секретный ключ')
-    group_id = IntegerField('ID Группы', validators=[DataRequired()])
+    group_id = StringField('ID Группы')
     submit = SubmitField('Сохранить')
