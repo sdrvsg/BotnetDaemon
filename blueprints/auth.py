@@ -1,11 +1,12 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_user, logout_user, login_required
 from forms.register import RegisterForm
 from forms.login import LoginForm
 from database import session
 from models.user import User
+from models.role import Role
 
-blueprint = Blueprint('auth', __name__)
+blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @blueprint.route('/register', methods=['GET', 'POST'])
@@ -25,12 +26,14 @@ def register():
                                    message='Такой пользователь уже есть')
         user = User(
             name=form.name.data,
-            email=form.email.data
+            email=form.email.data,
         )
         user.set_password(form.password.data)
-        connect.add(user)
+        role = connect.query(Role).filter(Role.slug == 'user').first()
+        role.users.append(user)
+        connect.merge(role)
         connect.commit()
-        return redirect('/login')
+        return redirect(url_for('.login'))
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
@@ -42,7 +45,7 @@ def login():
         user = connect.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect('/')
+            return redirect(url_for('main.index'))
         return render_template('auth/login.html',
                                message='Неправильный логин или пароль',
                                form=form)
@@ -53,4 +56,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect('/')
+    return redirect(url_for('main.index'))

@@ -5,14 +5,14 @@ from database import session
 from models.user import User
 from forms.payment import PaymentForm
 
-blueprint = Blueprint('gateway', __name__)
+blueprint = Blueprint('gateway', __name__, url_prefix='/gateway')
 HOST = 'https://www.free-kassa.ru/merchant/cash.php'
 SHOP_ID = 64860
 SECRET_ONE = '8gdj75mb'
 SECRET_TWO = 'p1hhfqfs'
 
 
-@blueprint.route('/gateway/payment', methods=['GET', 'POST'])
+@blueprint.route('/payment', methods=['GET', 'POST'])
 @login_required
 def payment():
     form = PaymentForm()
@@ -22,7 +22,7 @@ def payment():
     return render_template('gateway/payment.html', title='Пополнение баланса', form=form)
 
 
-@blueprint.route('/gateway/response', methods=['POST'])
+@blueprint.route('/response', methods=['POST'])
 def response():
     params = {
         'shop_id': request.form.get('MERCHANT_ID'),
@@ -52,13 +52,13 @@ def response():
     return make_response(('YES', 200))
 
 
-@blueprint.route('/gateway/success')
+@blueprint.route('/success')
 @login_required
 def success():
     return render_template('gateway/success.html', title='Успешно')
 
 
-@blueprint.route('/gateway/fail')
+@blueprint.route('/fail')
 @login_required
 def fail():
     return render_template('gateway/fail.html', title='Неудачно')
