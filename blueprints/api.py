@@ -29,21 +29,25 @@ def callback(bot_hash):
         return make_response((f'secret code failed', 403))
     if event_type == 'message_new':
         obj = request.json['object']['message']
-        response = get('https://botnet-daemon.herokuapp.com/api/answers/get', params={
+        response = get('http://botnet-daemon.herokuapp.com/api/answers/get', params={
             'bot_hash': bot_hash,
             'question': obj['text']
         }).json()
         if 'error' in response.keys():
-            get('https://api.vk.com/mesages.send', params={
+            get('https://api.vk.com/method/messages.send', params={
                 'user_id': obj['from_id'],
                 'random_id': randint(0, 2 ** 64),
-                'message': 'Произошла ошибка'
+                'message': 'Произошла ошибка',
+                'access_token': 'e75df46416e77fa6dee9f8415e2c067f929729b99a560bc4037ae60ca992980f9422ee199923139abb285',
+                'v': '5.103'
             })
         else:
-            get('https://api.vk.com/mesages.send', params={
+            get('https://api.vk.com/method/messages.send', params={
                 'user_id': obj['from_id'],
                 'random_id': randint(0, 2 ** 64),
-                'message': response['answer']
+                'message': response['answer'],
+                'access_token': 'e75df46416e77fa6dee9f8415e2c067f929729b99a560bc4037ae60ca992980f9422ee199923139abb285',
+                'v': '5.103'
             })
     return make_response(('bad request', 403))
 
