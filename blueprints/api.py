@@ -1,6 +1,5 @@
 from requests import get
 from random import randint
-import vk_api
 from flask import Blueprint, make_response, request, jsonify
 from database import session
 from models.bot import Bot
@@ -34,21 +33,18 @@ def callback(bot_hash):
             'bot_hash': bot_hash,
             'question': obj['text']
         }).json()
-        vk_session = vk_api.VkApi(token=bot.access_token)
-        vk_session.auth(token_only=True)
-        vk = vk_session.get_api()
         if 'error' in response.keys():
-            vk.messages.send(
-                user_id=obj['from_id'],
-                random_id=randint(0, 2 ** 64),
-                message='Произошла ошибка'
-            )
+            get('https://api.vk.com/mesages.send', params={
+                'user_id': obj['from_id'],
+                'random_id': randint(0, 2 ** 64),
+                'message': 'Произошла ошибка'
+            })
         else:
-            vk.messages.send(
-                user_id=obj['from_id'],
-                random_id=randint(0, 2 ** 64),
-                message=response['answer']
-            )
+            get('https://api.vk.com/mesages.send', params={
+                'user_id': obj['from_id'],
+                'random_id': randint(0, 2 ** 64),
+                'message': response['answer']
+            })
     return make_response(('bad request', 403))
 
 
