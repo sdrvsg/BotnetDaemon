@@ -60,12 +60,12 @@
                 </p>
                 <p>
                     Зайдите в раздел <span class="font-weight-bold">Callback API</span><br>
-                    - В подразделе <span class="font-weight-bold">Настройки сервера</span> Версию API укажите <span class="font-weight-bold">5.103</span><br>
-                    - Адрес укажите <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/api/callback/{{ bot.hash }}</span><br>
-                    - Снизу в рамке копируете те цифры, что идут после <span class="font-weight-bold">group_id</span>. Это ID Группы, сохраните его себе.<br>
-                    - <span class="font-weight-bold">Строку, которую должен вернуть сервер</span> также сохраните себе.<br>
-                    - <span class="font-weight-bold">Секретный ключ</span> задайте по своему усмотрению и также сохраните.<br>
-                    - В подразделе <span class="font-weight-bold">Типы событий</span> поставьте галочку на <span class="font-weight-bold">Входящее сообщение</span>.
+                    <span class="font-weight-bold">—</span> В подразделе <span class="font-weight-bold">Настройки сервера</span> Версию API укажите <span class="font-weight-bold">5.103</span><br>
+                    <span class="font-weight-bold">—</span> Адрес укажите <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/api/callback/{{ bot.hash }}</span><br>
+                    <span class="font-weight-bold">—</span> Снизу в рамке копируете те цифры, что идут после <span class="font-weight-bold">group_id</span>. Это ID Группы, сохраните его себе.<br>
+                    <span class="font-weight-bold">—</span> <span class="font-weight-bold">Строку, которую должен вернуть сервер</span> также сохраните себе.<br>
+                    <span class="font-weight-bold">—</span> <span class="font-weight-bold">Секретный ключ</span> задайте по своему усмотрению и также сохраните.<br>
+                    <span class="font-weight-bold">—</span> В подразделе <span class="font-weight-bold">Типы событий</span> поставьте галочку на <span class="font-weight-bold">Входящее сообщение</span>.
                 </p>
                 <p>
                     Нажмите <span class="font-weight-bold">Редактировать</span> и укажите
@@ -73,6 +73,33 @@
                     Нажмите <span class="font-weight-bold">Сохранить</span>.
                     В своей группе, в разделе <span class="font-weight-bold">Callback API</span> нажмите <span class="font-weight-bold">Подтвердить</span>.
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Ответы</h5>
+                <span>Ключевые слова в вопросах разделять прямым слешэм (|)</span>
+            </div>
+
+            <div class="card-body">
+                <table id="answers_table" class="table table-striped mb-3">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Вопрос</th>
+                            <th scope="col">Ответ</th>
+                            <th scope="col">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class="btn-group" role="group" aria-label="Bot status">
+                    <button class="btn btn-secondary" id="btn_load_answers">Загрузить</button>
+                    <button class="btn btn-secondary" id="btn_add_answer">Добавить</button>
+                </div>
             </div>
         </div>
     </div>
@@ -100,4 +127,95 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/notify.min.js"></script>
+<script>
+    var add_answer = function(q, a) {
+
+        $('#answers_table tbody').append('<tr>\n' +
+            '                               <td><textarea name="question" class="form-control" rows="2" placeholder="Вопрос">' + q + '</textarea></td>\n' +
+            '                               <td><textarea name="answer" class="form-control" rows="2" placeholder="Ответ">' + a + '</textarea></td>\n' +
+            '                               <td>\n' +
+            '                                   <a href="#" class="text-dark mr-3 save_answer"><i class="fa fa-check"></i></a>\n' +
+            '                                   <a href="#" class="text-dark mr-3 delete_answer"><i class="fa fa-trash-o"></i></a>\n' +
+            '                               </td>\n' +
+            '                           </tr>');
+
+    };
+
+    $('#btn_add_answer').click(function (e) {
+        add_answer('', '');
+    });
+
+    var csrf_token = "{{ csrf_token() }}";
+    var hash = "{{ bot.hash }}";
+
+    $('#btn_load_answers').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/answers',
+            headers: {
+                'X-CSRFToken': csrf_token
+            },
+            data: {
+                bot_hash: hash
+            },
+            success: function (data) {
+                if(data['error']) $.notify(data['error'], 'error');
+                else {
+                    $('#answers_table tbody').empty();
+                    data['answers'].forEach(function (v) {
+                        add_answer(v['question'], v['answer']);
+                    });
+                }
+            }
+        });
+    });
+
+    $('body').on('click', '.save_answer', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/answers/store',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrf_token
+            },
+            data: {
+                bot_hash: hash,
+                answer: $($(this).closest('tr').find('textarea[name="answer"]')[0]).val(),
+                question: $($(this).closest('tr').find('textarea[name="question"]')[0]).val(),
+            },
+            success: function (data) {
+                if(data['error']) $.notify(data['error'], 'error');
+                else $.notify(data['success'], 'success');
+            }
+        });
+    })
+
+    $('body').on('click', '.delete_answer', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/answers/delete',
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrf_token
+            },
+            data: {
+                bot_hash: hash,
+                question: $($(this).closest('tr').find('textarea[name="question"]')[0]).val(),
+            },
+            success: function (data) {
+                if(data['error']) $.notify(data['error'], 'error');
+                else {
+
+                    $('#btn_load_answers').click();
+                    $.notify(data['success'], 'success');
+
+                }
+            }
+        });
+    })
+</script>
 {% endblock %}

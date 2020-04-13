@@ -7,7 +7,7 @@ class Bot(SqlAlchemyBase):
     __tablename__ = 'bots'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    hash = sqlalchemy.Column(sqlalchemy.Integer, index=True, unique=True)
+    hash = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     access_token = sqlalchemy.Column(sqlalchemy.String)
     confirmation_token = sqlalchemy.Column(sqlalchemy.String)
@@ -16,3 +16,4 @@ class Bot(SqlAlchemyBase):
     group_id = sqlalchemy.Column(sqlalchemy.Integer)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False)
     user = orm.relationship('User', back_populates='bots')
+    answers = orm.relationship('Answer', back_populates='bot')

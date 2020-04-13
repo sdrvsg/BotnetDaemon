@@ -6,3 +6,4 @@ werkzeug
 flask-wtf
 wtforms
 vk_api
+requests
