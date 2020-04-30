@@ -33,15 +33,7 @@ def callback(bot_hash):
             'bot_hash': bot_hash,
             'question': obj['text']
         }).json()
-        if 'error' in response.keys():
-            get('https://api.vk.com/method/messages.send', params={
-                'user_id': obj['from_id'],
-                'random_id': randint(0, 2 ** 64),
-                'message': 'Произошла ошибка',
-                'access_token': bot.access_token,
-                'v': '5.103'
-            })
-        else:
+        if 'error' not in response.keys():
             get('https://api.vk.com/method/messages.send', params={
                 'user_id': obj['from_id'],
                 'random_id': randint(0, 2 ** 64),
@@ -49,8 +41,7 @@ def callback(bot_hash):
                 'access_token': bot.access_token,
                 'v': '5.103'
             })
-        return make_response(('ok', 200))
-    return make_response(('bad request', 403))
+    return make_response(('ok', 200))
 
 
 @blueprint.route('/answers', methods=['GET'])
@@ -116,7 +107,7 @@ def answers_get():
     bot_hash = request.args.get('bot_hash')
     q = request.args.get('question')
     if not q:
-        return make_response((jsonify({'error': 'Неверные данные'}), 200))
+        return make_response((jsonify({'error': 'Bad request'}), 200))
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     for answer in bot.answers:
@@ -126,4 +117,4 @@ def answers_get():
     answer = connect.query(Answer).filter(Answer.bot == bot, Answer.question == '@default').first()
     if answer:
         return make_response((jsonify({'answer': answer.answer}), 200))
-    return make_response((jsonify({'answer': 'Произошла ошибка на сервере'}), 200))
+    return make_response((jsonify({'error': 'Answers not found'}), 200))
