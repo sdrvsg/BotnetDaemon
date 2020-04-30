@@ -34,7 +34,7 @@ def bot_enabled_required(f):
         bot_hash = kwargs.get('bot_hash', 0)
         bot = session.create_session().query(Bot).filter(Bot.hash == bot_hash).first()
         if not bot.enabled:
-            return abort(403)
+            return make_response(('ok', 200))
         return f(*args, **kwargs)
     return decorated_function
 

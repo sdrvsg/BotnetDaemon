@@ -60,12 +60,12 @@
                 </p>
                 <p>
                     Зайдите в раздел <span class="font-weight-bold">Callback API</span><br>
-                    <span class="font-weight-bold">—</span> В подразделе <span class="font-weight-bold">Настройки сервера</span> Версию API укажите <span class="font-weight-bold">5.103</span><br>
-                    <span class="font-weight-bold">—</span> Адрес укажите <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/api/callback/{{ bot.hash }}</span><br>
-                    <span class="font-weight-bold">—</span> Снизу в рамке копируете те цифры, что идут после <span class="font-weight-bold">group_id</span>. Это ID Группы, сохраните его себе.<br>
-                    <span class="font-weight-bold">—</span> <span class="font-weight-bold">Строку, которую должен вернуть сервер</span> также сохраните себе.<br>
-                    <span class="font-weight-bold">—</span> <span class="font-weight-bold">Секретный ключ</span> задайте по своему усмотрению и также сохраните.<br>
-                    <span class="font-weight-bold">—</span> В подразделе <span class="font-weight-bold">Типы событий</span> поставьте галочку на <span class="font-weight-bold">Входящее сообщение</span>.
+                    <span class="font-weight-bold">1.</span> В подразделе <span class="font-weight-bold">Настройки сервера</span> Версию API укажите <span class="font-weight-bold">5.103</span><br>
+                    <span class="font-weight-bold">2.</span> Адрес укажите <span class="font-weight-bold">https://botnet-daemon.herokuapp.com/api/callback/{{ bot.hash }}</span><br>
+                    <span class="font-weight-bold">3.</span> Снизу в рамке копируете те цифры, что идут после <span class="font-weight-bold">group_id</span>. Это ID Группы, сохраните его себе.<br>
+                    <span class="font-weight-bold">4.</span> <span class="font-weight-bold">Строку, которую должен вернуть сервер</span> также сохраните себе.<br>
+                    <span class="font-weight-bold">5.</span> <span class="font-weight-bold">Секретный ключ</span> задайте по своему усмотрению и также сохраните.<br>
+                    <span class="font-weight-bold">6.</span> В подразделе <span class="font-weight-bold">Типы событий</span> поставьте галочку на <span class="font-weight-bold">Входящее сообщение</span>.
                 </p>
                 <p>
                     Нажмите <span class="font-weight-bold">Редактировать</span> и укажите
@@ -81,7 +81,9 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Ответы</h5>
-                <span>Ключевые слова в вопросах разделять прямым слешэм (|)</span>
+                <span>Ключевые слова в вопросах разделять прямым слешэм (|)</span><br><br>
+                <span>По умолчанию бот не отвечает на сообщения, в которых нет ключевых слов</span><br>
+                <span>Чтобы исправить это поведение, добавьте ответ и поле Вопрос введите <span class="font-weight-bold">@default</span></span>
             </div>
 
             <div class="card-body">

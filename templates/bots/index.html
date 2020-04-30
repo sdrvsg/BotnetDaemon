@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-6">
+    <div class="col-12 col-xl-6">
         <h2>Мои боты</h2>
         <a href="{{ url_for('bots.create') }}" class="btn btn-secondary mb-5
         {% if not can_create %} disabled" tabindex="-1" role="button" aria-disabled="true {% endif %}">Добавить бота</a>
