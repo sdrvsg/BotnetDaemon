@@ -4,6 +4,6 @@ flask-login
 sqlalchemy
 werkzeug
 flask-wtf
-wtforms
+wtforms==2.2.1
 vk_api
 requests
