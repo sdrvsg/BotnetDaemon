@@ -49,6 +49,7 @@ def callback(bot_hash):
                 'access_token': bot.access_token,
                 'v': '5.103'
             })
+        return make_response(('ok', 200))
     return make_response(('bad request', 403))
 
 
