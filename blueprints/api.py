@@ -38,7 +38,7 @@ def callback(bot_hash):
                 'user_id': obj['from_id'],
                 'random_id': randint(0, 2 ** 64),
                 'message': 'Произошла ошибка',
-                'access_token': 'e75df46416e77fa6dee9f8415e2c067f929729b99a560bc4037ae60ca992980f9422ee199923139abb285',
+                'access_token': bot.access_token,
                 'v': '5.103'
             })
         else:
@@ -46,7 +46,7 @@ def callback(bot_hash):
                 'user_id': obj['from_id'],
                 'random_id': randint(0, 2 ** 64),
                 'message': response['answer'],
-                'access_token': 'e75df46416e77fa6dee9f8415e2c067f929729b99a560bc4037ae60ca992980f9422ee199923139abb285',
+                'access_token': bot.access_token,
                 'v': '5.103'
             })
     return make_response(('bad request', 403))
