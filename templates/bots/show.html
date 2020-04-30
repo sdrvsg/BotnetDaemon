@@ -97,7 +97,6 @@
                     </tbody>
                 </table>
                 <div class="btn-group" role="group" aria-label="Bot status">
-                    <button class="btn btn-secondary" id="btn_load_answers">Загрузить</button>
                     <button class="btn btn-secondary" id="btn_add_answer">Добавить</button>
                 </div>
             </div>
@@ -132,28 +131,15 @@
 {% block scripts %}
 <script src="/static/js/notify.min.js"></script>
 <script>
-    var add_answer = function(q, a) {
+    let csrf_token = "{{ csrf_token() }}";
+    let hash = "{{ bot.hash }}";
+    let body = $('body');
 
-        $('#answers_table tbody').append('<tr>\n' +
-            '                               <td><textarea name="question" class="form-control" rows="2" placeholder="Вопрос">' + q + '</textarea></td>\n' +
-            '                               <td><textarea name="answer" class="form-control" rows="2" placeholder="Ответ">' + a + '</textarea></td>\n' +
-            '                               <td>\n' +
-            '                                   <a href="#" class="text-dark mr-3 save_answer"><i class="fa fa-check"></i></a>\n' +
-            '                                   <a href="#" class="text-dark mr-3 delete_answer"><i class="fa fa-trash-o"></i></a>\n' +
-            '                               </td>\n' +
-            '                           </tr>');
-
-    };
-
-    $('#btn_add_answer').click(function (e) {
-        add_answer('', '');
+    $(document).ready(function () {
+        load_answers();
     });
 
-    var csrf_token = "{{ csrf_token() }}";
-    var hash = "{{ bot.hash }}";
-
-    $('#btn_load_answers').click(function (e) {
-        e.preventDefault();
+    let load_answers = function () {
         $.ajax({
             url: '/api/answers',
             headers: {
@@ -167,55 +153,103 @@
                 else {
                     $('#answers_table tbody').empty();
                     data['answers'].forEach(function (v) {
-                        add_answer(v['question'], v['answer']);
+                        add_answer(v['id'], v['question'], v['answer']);
                     });
                 }
             }
         });
+    };
+
+    let add_answer = function(id, q, a) {
+        $('#answers_table tbody').append('<tr data-answer-id="' + id + '">\n' +
+            '                               <td><textarea name="question" class="form-control" rows="2" placeholder="Вопрос">' + q + '</textarea></td>\n' +
+            '                               <td><textarea name="answer" class="form-control" rows="2" placeholder="Ответ">' + a + '</textarea></td>\n' +
+            '                               <td>\n' +
+            '                                   <a href="#" class="text-dark mr-3 save_answer"><i class="fa fa-check"></i></a>\n' +
+            '                                   <a href="#" class="text-dark mr-3 delete_answer"><i class="fa fa-trash-o"></i></a>\n' +
+            '                               </td>\n' +
+            '                           </tr>');
+    };
+
+    $('#btn_add_answer').click(function (e) {
+        add_answer(0, '', '');
     });
 
-    $('body').on('click', '.save_answer', function (e) {
+    body.on('click', '.save_answer', function (e) {
         e.preventDefault();
-        $.ajax({
-            url: '/api/answers/store',
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrf_token
-            },
-            data: {
-                bot_hash: hash,
-                answer: $($(this).closest('tr').find('textarea[name="answer"]')[0]).val(),
-                question: $($(this).closest('tr').find('textarea[name="question"]')[0]).val(),
-            },
-            success: function (data) {
-                if(data['error']) $.notify(data['error'], 'error');
-                else $.notify(data['success'], 'success');
-            }
-        });
-    })
+        let tr = $(this).closest('tr');
+        let id = tr.data('answer-id');
 
-    $('body').on('click', '.delete_answer', function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: '/api/answers/delete',
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': csrf_token
-            },
-            data: {
-                bot_hash: hash,
-                question: $($(this).closest('tr').find('textarea[name="question"]')[0]).val(),
-            },
-            success: function (data) {
-                if(data['error']) $.notify(data['error'], 'error');
-                else {
-
-                    $('#btn_load_answers').click();
-                    $.notify(data['success'], 'success');
-
+        if(id > 0) {
+            $.ajax({
+                url: '/api/answers/update',
+                method: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrf_token
+                },
+                data: {
+                    bot_hash: hash,
+                    id: id,
+                    answer: $(tr.find('textarea[name="answer"]')[0]).val(),
+                    question: $(tr.find('textarea[name="question"]')[0]).val(),
+                },
+                success: function (data) {
+                    if(data['error']) $.notify(data['error'], 'error');
+                    else $.notify(data['success'], 'success');
                 }
-            }
-        });
+            });
+        } else {
+            $.ajax({
+                url: '/api/answers/store',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf_token
+                },
+                data: {
+                    bot_hash: hash,
+                    answer: $(tr.find('textarea[name="answer"]')[0]).val(),
+                    question: $(tr.find('textarea[name="question"]')[0]).val(),
+                },
+                success: function (data) {
+                    if(data['error']) $.notify(data['error'], 'error');
+                    else {
+                        $.notify(data['success'], 'success');
+                        tr.data('answer-id', data['answer_id']);
+                    }
+                }
+            });
+        }
+    });
+
+    body.on('click', '.delete_answer', function (e) {
+        e.preventDefault();
+        let tr = $(this).closest('tr');
+        let id = tr.data('answer-id');
+
+        if(id > 0) {
+            $.ajax({
+                url: '/api/answers/delete',
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrf_token
+                },
+                data: {
+                    bot_hash: hash,
+                    id: id,
+                },
+                success: function (data) {
+                    if(data['error']) $.notify(data['error'], 'error');
+                    else {
+                        tr.remove();
+                        $.notify(data['success'], 'success');
+                    }
+                }
+            });
+
+        } else {
+             tr.remove();
+             $.notify(data['success'], 'success');
+        }
     })
 </script>
 {% endblock %}

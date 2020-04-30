@@ -54,6 +54,7 @@ def answers_index():
     return make_response((jsonify({
         'answers': [
             {
+                'id': answer.id,
                 'question': answer.question,
                 'answer': answer.answer,
             } for answer in bot.answers]
@@ -72,9 +73,36 @@ def answers_store():
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
     answer = connect.query(Answer).filter(Answer.bot == bot, Answer.question == q).first()
+    if answer:
+        return make_response((jsonify({'error': 'Неверные данные'}), 200))
+    answer = Answer()
+    bot.answers.append(answer)
+    answer.question = q
+    answer.answer = a
+    connect.merge(bot)
+    connect.commit()
+    answer = connect.query(Answer).filter(Answer.bot == bot, Answer.question == q).first()
+    return make_response((jsonify({
+        'success': 'Добавлено',
+        'answer_id': answer.id
+    }), 200))
+
+
+@blueprint.route('/answers/update', methods=['PUT'])
+@api_bot_exists_required
+@api_bot_owner_required
+def answers_update():
+    bot_hash = request.form.get('bot_hash')
+    answer_id = request.form.get('id')
+    q = request.form.get('question')
+    a = request.form.get('answer')
+    if not q or not a or not answer_id:
+        return make_response((jsonify({'error': 'Неверные данные'}), 200))
+    connect = session.create_session()
+    bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
+    answer = connect.query(Answer).filter(Answer.bot == bot, Answer.id == answer_id).first()
     if not answer:
-        answer = Answer()
-        bot.answers.append(answer)
+        make_response((jsonify({'error': 'Неверные данные'}), 200))
     answer.question = q
     answer.answer = a
     connect.merge(bot)
@@ -87,12 +115,12 @@ def answers_store():
 @api_bot_owner_required
 def answers_delete():
     bot_hash = request.form.get('bot_hash')
-    q = request.form.get('question')
-    if not q:
+    answer_id = request.form.get('id')
+    if not answer_id:
         return make_response((jsonify({'error': 'Неверные данные'}), 200))
     connect = session.create_session()
     bot = connect.query(Bot).filter(Bot.hash == bot_hash).first()
-    answer = connect.query(Answer).filter(Answer.bot == bot, Answer.question == q).first()
+    answer = connect.query(Answer).filter(Answer.bot == bot, Answer.id == answer_id).first()
     if not answer:
         return make_response((jsonify({'error': 'Неверные данные'}), 200))
     connect.delete(answer)
