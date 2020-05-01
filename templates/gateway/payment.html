@@ -3,8 +3,28 @@
 {% block content %}
 <div class="row">
     <div class="col-12 col-xl-6">
-        <h2>Пополнение баланса</h2>
+        <h3>Пополнение баланса <span class="small">(closed)</span></h3>
         <form action="" method="post">
+            {{ form.test(value=0) }}
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.money_amount.label }}<br>
+                {{ form.money_amount(class="form-control") }}<br>
+                {% for error in form.money_amount.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit(type="submit", class="btn btn-secondary", disabled="disabled") }}</p>
+            {{message}}
+        </form>
+    </div>
+
+    <div class="col-12 col-xl-6">
+        <h3>Тестовая покупка</h3>
+        <form action="" method="post">
+            {{ form.test(value=1) }}
             {{ form.hidden_tag() }}
             <p>
                 {{ form.money_amount.label }}<br>
