@@ -11,6 +11,10 @@ from models.user import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'eg5e4a5a5v4j4fd4h'
+app.config['DB_HOST'] = '95.216.2.95'
+app.config['DB_USER'] = 'csbyteru_lyceum'
+app.config['DB_PASSWORD'] = 'ghjdfk23'
+app.config['DB_BASE'] = 'csbyteru_botnet'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -21,7 +25,12 @@ app.register_blueprint(bp_auth)
 app.register_blueprint(bp_gateway)
 app.register_blueprint(bp_api)
 
-session.global_init('database/bot_net.sqlite')
+session.global_init(
+    app.config['DB_HOST'],
+    app.config['DB_USER'],
+    app.config['DB_PASSWORD'],
+    app.config['DB_BASE']
+)
 
 csrf = CSRFProtect()
 csrf.init_app(app)

@@ -7,3 +7,4 @@ flask-wtf
 wtforms==2.2.1
 vk_api
 requests
+pymysql
