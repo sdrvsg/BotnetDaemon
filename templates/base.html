@@ -39,10 +39,9 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ url_for('bots.index') }}">Мои боты</a>
                                 <a class="dropdown-item" href="/market">Магазин ботов</a>
+                                <a class="dropdown-item" href="/roles">Магазин статусов</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% if current_user.role.id == 1 %} /roles {% else %} # {% endif %}">Статус: {{ current_user.role.name }}</a>
                                 <a class="dropdown-item" href="{{ url_for('gateway.payment') }}">Баланс: {{ current_user.money }} руб.</a>
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выход</a>
                             </div>
                         </li>

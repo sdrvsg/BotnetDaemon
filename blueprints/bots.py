@@ -15,8 +15,7 @@ blueprint = Blueprint('bots', __name__, url_prefix='/bots')
 def index():
     connect = session.create_session()
     bots = connect.query(Bot).filter(Bot.user == current_user).all()
-    user = connect.query(User).get(current_user.id)
-    can_create = len(user.bots) < user.role.bots_limit
+    can_create = len(current_user.bots) < current_user.role.bots_limit
     return render_template('bots/index.html', title='Мои боты', bots=bots, can_create=can_create)
 
 
