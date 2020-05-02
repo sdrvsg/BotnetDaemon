@@ -17,7 +17,8 @@ SECRET_TWO = 'p1hhfqfs'
 def payment():
     form = PaymentForm()
     if form.validate_on_submit():
-        if form.test:
+        print(form.test.data)
+        if int(form.test.data) == 1:
             current_user.money += form.money_amount.data
             connect = session.create_session()
             connect.merge(current_user)

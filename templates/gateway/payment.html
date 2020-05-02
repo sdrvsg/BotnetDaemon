@@ -6,7 +6,7 @@
         <h3>Пополнение баланса <span class="small">(closed)</span></h3>
         <form action="" method="post">
             {{ form.test(value=0) }}
-            {{ form.hidden_tag() }}
+            {{ form.csrf_token() }}
             <p>
                 {{ form.money_amount.label }}<br>
                 {{ form.money_amount(class="form-control") }}<br>
@@ -25,7 +25,7 @@
         <h3>Тестовая покупка</h3>
         <form action="" method="post">
             {{ form.test(value=1) }}
-            {{ form.hidden_tag() }}
+            {{ form.csrf_token() }}
             <p>
                 {{ form.money_amount.label }}<br>
                 {{ form.money_amount(class="form-control") }}<br>
