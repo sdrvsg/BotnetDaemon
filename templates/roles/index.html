@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h2 class="display-4">Дополнительные возможности</h2>
+    <p class="lead">
+        Если Вам не хватает стандартного тарифного плана, Вы можете его сменить на увеличенный.
+    </p>
+</div>
+
+<div class="card-deck mb-3 text-center">
+    {% for role in roles %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ role.name }}</h4>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title pricing-card-title">{{ role.cost }} руб. <small class="text-muted">/ Навсегда</small></h3>
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>Ботов максимально: {{ role.bots_limit }}</li>
+                    {% for item in description[loop.index0] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% if current_user.role.id >= role.id %}
+                    <button type="button" class="btn btn-lg btn-block btn-primary" disabled>Уже имеется</button>
+                {% elif current_user.money < role.cost %}
+                    <a href="{{ url_for('gateway.payment') }}" class="btn btn-lg btn-block btn-outline-secondary">Пополнить баланс</a>
+                {% else %}
+                    <a href="{{ url_for('roles.buy', role_id=role.id) }}" class="btn btn-lg btn-block btn-outline-primary">Приобрести</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

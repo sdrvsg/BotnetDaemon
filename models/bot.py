@@ -15,5 +15,5 @@ class Bot(SqlAlchemyBase):
     enabled = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=True)
     group_id = sqlalchemy.Column(sqlalchemy.Integer)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False)
-    user = orm.relationship('User', back_populates='bots')
-    answers = orm.relationship('Answer', back_populates='bot')
+    user = orm.relationship('User', back_populates='bots', lazy='subquery')
+    answers = orm.relationship('Answer', back_populates='bot', lazy='subquery')

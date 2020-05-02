@@ -4,6 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from database import session
 from blueprints.main import blueprint as bp_main
 from blueprints.bots import blueprint as bp_bots
+from blueprints.roles import blueprint as bp_roles
 from blueprints.auth import blueprint as bp_auth
 from blueprints.gateway import blueprint as bp_gateway
 from blueprints.api import blueprint as bp_api
@@ -21,6 +22,7 @@ login_manager.init_app(app)
 
 app.register_blueprint(bp_main)
 app.register_blueprint(bp_bots)
+app.register_blueprint(bp_roles)
 app.register_blueprint(bp_auth)
 app.register_blueprint(bp_gateway)
 app.register_blueprint(bp_api)
