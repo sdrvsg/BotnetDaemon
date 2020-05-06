@@ -1,0 +1,39 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-xl-6">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">
+                    Тикеты
+                    {% if waiting_tickets_num %}
+                    <span class="badge badge-pill badge-success">{{ waiting_tickets_num }}</span>
+                    {% endif %}
+                </h5>
+            </div>
+
+            <div class="card-footer">
+                <a href="{{ url_for('admin.support_index') }}" class="btn btn-outline-success">Просмотр</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-6">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">
+                    Роли
+                    {% if waiting_tickets_num %}
+                    <span class="badge badge-pill badge-success">{{ roles_num }}</span>
+                    {% endif %}
+                </h5>
+            </div>
+
+            <div class="card-footer">
+                <a href="{{ url_for('admin.roles_index') }}" class="btn btn-outline-success">Просмотр</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

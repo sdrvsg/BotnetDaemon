@@ -1,0 +1,60 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-3">Просмотр тикета "{{ ticket.title }}"</h4>
+        {% if not ticket.is_closed %}
+            <a href="{{ url_for('admin.support_close', ticket_id=ticket.id) }}" class="btn btn-secondary">Закрыть тикет</a>
+        {% else %}
+            <a href="#" class="btn btn-secondary disabled">Тикет закрыт</a>
+        {% endif %}
+        <a href="{{ url_for('admin.support_index') }}" class="btn btn-secondary">К тикетам</a>
+    </div>
+    <div class="card-body">
+        <h5 class="mb-4">Сообщения</h5>
+        <div class="row">
+            {% for message in messages %}
+                <div class="col-12 col-xl-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            {% autoescape off %}
+                                От: <span style="{{ message.user.role.styles }}">{{ message.user.name }}</span>
+                            {% endautoescape %}
+                        </div>
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p class="small">
+                                    {{ message.text | nl2br }}
+                                </p>
+                                <footer class="blockquote-footer">
+                                    {{ message.created_at.strftime('%d %b %Y %H:%M') }}
+                                </footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 d-none d-xl-block"></div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if not ticket.is_closed %}
+        <div class="card-footer">
+            <form action="" method="post">
+                {{ form.csrf_token() }}
+                <p>
+                    {{ form.text.label }}<br>
+                    {{ form.text(class="form-control") }}<br>
+                    {% for error in form.text.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </p>
+                <p>{{ form.submit(type="submit", class="btn btn-secondary") }}</p>
+                {{message}}
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -13,7 +13,7 @@ def global_init(host, user, password, database):
         return
 
     engine = sa.create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}', echo=False)
-    __factory = orm.sessionmaker(bind=engine)
+    __factory = orm.sessionmaker(bind=engine, autoflush=True)
 
     from . import __models
     SqlAlchemyBase.metadata.create_all(engine)

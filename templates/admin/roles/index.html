@@ -1,0 +1,33 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-xl-6">
+        <h2>Управление ролями</h2>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for role in roles %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td class="text-dark">
+                        {% autoescape off %}
+                            <span style="{{ role.styles }}">{{ role.name }}</span>
+                        {% endautoescape %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.roles_edit', role_id=role.id) }}" class="text-dark mr-3"><i class="fa fa-edit"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

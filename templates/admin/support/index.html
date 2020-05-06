@@ -1,0 +1,76 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-xl-6 mb-5">
+        <h3 class="mb-3">Тикеты в работе</h3>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Тема</th>
+                    <th scope="col">Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets_new %}
+                    <tr>
+                        <th scope="row">
+                            <a class="text-dark" href="{{ url_for('admin.support_show', ticket_id=ticket.id) }}">
+                                {{ ticket.id }}
+                            </a>
+                        </th>
+                        <td>
+                            <a class="text-dark" href="{{ url_for('admin.support_show', ticket_id=ticket.id) }}">
+                                {{ ticket.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if ticket.is_closed %}
+                                Закрыт
+                            {% else %}
+                                Открыт
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-12 col-xl-6 mb-5">
+        <h3 class="mb-3">Тикеты, на которые уже ответили</h3>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Тема</th>
+                    <th scope="col">Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets_old %}
+                    <tr>
+                        <th scope="row">
+                            <a class="text-dark" href="{{ url_for('admin.support_show', ticket_id=ticket.id) }}">
+                                {{ ticket.id }}
+                            </a>
+                        </th>
+                        <td>
+                            <a class="text-dark" href="{{ url_for('admin.support_show', ticket_id=ticket.id) }}">
+                                {{ ticket.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if ticket.is_closed %}
+                                Закрыт
+                            {% else %}
+                                Открыт
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

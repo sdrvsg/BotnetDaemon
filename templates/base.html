@@ -39,10 +39,18 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ url_for('bots.index') }}">Мои боты</a>
                                 <a class="dropdown-item" href="/market">Магазин ботов</a>
+                                <a class="dropdown-item" href="{{ url_for('support.index') }}">Поддержка</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ url_for('roles.index') }}">Статус: {{ current_user.role.name }}</a>
+                                <a class="dropdown-item" href="{{ url_for('roles.index') }}">
+                                    {% autoescape off %}
+                                        Статус: <span style="{{ current_user.role.styles }}">{{ current_user.role.name }}</span>
+                                    {% endautoescape %}
+                                </a>
                                 <a class="dropdown-item" href="{{ url_for('gateway.payment') }}">Баланс: {{ current_user.money }} руб.</a>
                                 <div class="dropdown-divider"></div>
+                                {% if current_user.role.slug == 'admin' %}
+                                    <a class="dropdown-item" href="{{ url_for('admin.index') }}">Админ-панель</a>
+                                {% endif %}
                                 <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выход</a>
                             </div>
                         </li>
