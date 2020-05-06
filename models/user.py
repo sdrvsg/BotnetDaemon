@@ -16,6 +16,8 @@ class User(SqlAlchemyBase, UserMixin):
     money = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     bots = orm.relationship('Bot', back_populates='user', lazy='subquery')
+    tickets = orm.relationship('Ticket', back_populates='user', lazy='subquery')
+    messages = orm.relationship('Message', back_populates='user', lazy='subquery')
     role_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('roles.id'), nullable=False)
     role = orm.relationship('Role', back_populates='users', lazy='subquery')
 

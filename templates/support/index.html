@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mb-3">Ваши тикеты</h3>
+<a href="{{ url_for('support.create') }}" class="btn btn-outline-secondary mb-3">Открыть тикет</a>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Тема</th>
+            <th scope="col">Ответил</th>
+            <th scope="col">Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets %}
+            <tr>
+                <th scope="row">
+                    <a class="text-dark" href="{{ url_for('support.show', ticket_id=ticket.id) }}">
+                        {{ ticket.id }}
+                    </a>
+                </th>
+                <td>
+                    <a class="text-dark" href="{{ url_for('support.show', ticket_id=ticket.id) }}">
+                        {{ ticket.title }}
+                    </a>
+                </td>
+                <td>
+                    {# костыль, но рабоатает)) #}
+                    {% with a = ticket.messages.sort(key=k) %}
+                        {% autoescape off %}
+                            <span style="{{ ticket.messages[-1].user.role.styles }}">{{ ticket.messages[-1].user.name }}</span>
+                        {% endautoescape %}
+                    {% endwith %}
+                </td>
+                <td>
+                    {% if ticket.is_closed %}
+                        Закрыт
+                    {% else %}
+                        Открыт
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

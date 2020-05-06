@@ -4,6 +4,7 @@ from flask_login import current_user
 from database import session
 from models.bot import Bot
 from models.role import Role
+from models.ticket import Ticket
 
 
 def bot_exists_required(f):
@@ -39,14 +40,16 @@ def bot_enabled_required(f):
     return decorated_function
 
 
-def role_required(f, slug):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        role = session.create_session().query(Role).filter(Role.slug == slug).first()
-        if current_user.role != role:
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
+def role_required(slug):
+    def real_decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            role = session.create_session().query(Role).filter(Role.slug == slug).first()
+            if current_user.role.id != role.id:
+                return abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    return real_decorator
 
 
 def check_bot_limit(f):
@@ -100,5 +103,27 @@ def api_bot_enabled_required(f):
             return make_response(jsonify({
                 'error': 'Бот выключен'
             }))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def ticket_owner_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        ticket_id = kwargs.get('ticket_id', 0)
+        ticket = session.create_session().query(Ticket).filter(Ticket.id == ticket_id).first()
+        if ticket.user != current_user:
+            return abort(404)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def ticket_opened_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        ticket_id = kwargs.get('ticket_id', 0)
+        ticket = session.create_session().query(Ticket).filter(Ticket.id == ticket_id).first()
+        if ticket.is_closed and request.method == 'POST':
+            return abort(404)
         return f(*args, **kwargs)
     return decorated_function
