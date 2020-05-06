@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for
-from flask_login import current_user
+from flask_login import current_user, login_required
 from database import session
 from models.role import Role
 
@@ -7,6 +7,7 @@ blueprint = Blueprint('roles', __name__, url_prefix='/roles')
 
 
 @blueprint.route('/')
+@login_required
 def index():
     connect = session.create_session()
     roles = connect.query(Role).filter(Role.cost >= 0).all()
@@ -28,6 +29,7 @@ def index():
 
 
 @blueprint.route('/buy/<int:role_id>')
+@login_required
 def buy(role_id):
     connect = session.create_session()
     role = connect.query(Role).get(role_id)
@@ -43,6 +45,7 @@ def buy(role_id):
 
 
 @blueprint.route('/success/<int:role_id>')
+@login_required
 def success(role_id):
     connect = session.create_session()
     return render_template('roles/success.html', title='Успешно', role=connect.query(Role).get(role_id))

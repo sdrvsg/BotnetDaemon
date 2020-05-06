@@ -12,7 +12,11 @@
     {% for role in roles %}
         <div class="card mb-4 shadow-sm">
             <div class="card-header">
-                <h4 class="my-0 font-weight-normal">{{ role.name }}</h4>
+                <h4 class="my-0 font-weight-normal">
+                    {% autoescape off %}
+                        <span style="{{ role.styles }}">{{ role.name }}</span>
+                    {% endautoescape %}
+                </h4>
             </div>
             <div class="card-body">
                 <h3 class="card-title pricing-card-title">{{ role.cost }} руб. <small class="text-muted">/ Навсегда</small></h3>
