@@ -5,6 +5,7 @@ from models.user import User
 from models.role import Role
 from forms.register import RegisterForm
 from forms.login import LoginForm
+from utils.passwords import simple_passwords
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -13,6 +14,11 @@ blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        if form.password.data in simple_passwords:
+            return render_template('auth/register.html',
+                                   title='Регистрация',
+                                   form=form,
+                                   message='Слишком простой пароль')
         if form.password.data != form.password_again.data:
             return render_template('auth/register.html',
                                    title='Регистрация',
