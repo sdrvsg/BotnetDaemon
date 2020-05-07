@@ -28,7 +28,7 @@ def callback(bot_hash):
     if bot.secret and secret != bot.secret:
         return make_response((f'secret code failed', 403))
     if event_type == 'message_new':
-        obj = request.json['object']['message']
+        obj = request.json['object']['text']
         response = get('http://botnet-daemon.herokuapp.com/api/answers/get', params={
             'bot_hash': bot_hash,
             'question': obj['text']
