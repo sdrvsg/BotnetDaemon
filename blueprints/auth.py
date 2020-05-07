@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_user, logout_user, login_required
-from forms.register import RegisterForm
-from forms.login import LoginForm
 from database import session
 from models.user import User
 from models.role import Role
+from forms.register import RegisterForm
+from forms.login import LoginForm
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 

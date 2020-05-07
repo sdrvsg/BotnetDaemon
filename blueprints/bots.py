@@ -3,7 +3,6 @@ from flask import Blueprint, render_template, redirect, request, abort
 from flask_login import login_required, current_user
 from database import session
 from models.bot import Bot
-from models.user import User
 from forms.bot import BotForm
 from utils.decorators import bot_exists_required, bot_owner_required, check_bot_limit
 

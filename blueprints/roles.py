@@ -22,7 +22,7 @@ def index():
         ],
         [
             'Высокий приоритет тех. поддержки',
-            'Уникальные боты'
+            'Первым получает все новые плюшки'
         ]
     ]
     return render_template('roles/index.html', title='Статусы', roles=roles, description=description)
